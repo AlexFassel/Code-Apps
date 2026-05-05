@@ -4,6 +4,9 @@ name: Deploy to Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -24,6 +27,36 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      
+      # Check out the repository
+      - uses: actions/checkout@v4
+
+      # List the frontend files to verify checkout worked
+      #- run: ls -la frontend/
+      # Check out the repository
+      - uses: actions/checkout@v4
+
+      # Configure GitHub Pages settings
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Stage the data file next to the frontend so the deployed page can fetch it
+      - name: Stage site
+        run: cp data/experiments.json frontend/
+
+      # Upload the frontend folder as the Pages artifact
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: frontend
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+
+
       # Lab 3: Add the deployment steps here
       # You need to:
       # 1. Check out the repository
@@ -33,4 +66,4 @@ jobs:
       #
       # Hint: look at the actions/checkout, actions/configure-pages,
       #       actions/upload-pages-artifact, and actions/deploy-pages actions
-      - run: echo "Replace this step with the real deployment steps"
+      #- run: echo "Replace this step with the real deployment steps"
