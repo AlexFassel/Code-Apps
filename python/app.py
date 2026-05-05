@@ -87,13 +87,20 @@ def get_summary():
         if verdict in by_verdict:
             by_verdict[verdict] += 1
 
-    # TODO: Add by_tool grouping — Lab 2
-    # Add a by_tool dict that groups verdict counts per tool.
-    # The frontend expects: { "<tool name>": { "Faster": 0, "Same": 0, ... } }
+    # Group verdict counts per tool
+    by_tool = {}
+    for exp in experiments:
+        tool = exp.get("tool", "")
+        if tool not in by_tool:
+            by_tool[tool] = {"Faster": 0, "Same": 0, "Slower": 0, "Surprising": 0}
+        verdict = exp.get("verdict", "")
+        if verdict in by_tool[tool]:
+            by_tool[tool][verdict] += 1
 
     return jsonify({
         "total": len(experiments),
         "by_verdict": by_verdict,
+        "by_tool": by_tool,
     })
 
 
